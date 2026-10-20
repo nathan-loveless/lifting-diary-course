@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Available docs:
 - /docs/ui.md
+- /docs/data-fetching.md
 
 ## Commands
 

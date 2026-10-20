@@ -1,12 +1,8 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { format, isValid, parse } from "date-fns";
+import { connection } from "next/server";
+import { Suspense } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Card,
   CardContent,
@@ -14,60 +10,57 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { getWorkoutsForDate } from "@/data/workouts";
 
-// Placeholder UI data only - to be replaced once data fetching is built.
-const placeholderWorkouts = [
-  { id: 1, name: "Upper Body Push", exercises: 5, sets: 18 },
-  { id: 2, name: "Evening Accessory Work", exercises: 3, sets: 9 },
-];
+import { DatePicker } from "./date-picker";
 
-export default function DashboardPage() {
-  // Set after mount so the current time isn't baked in at prerender.
-  const [date, setDate] = useState<Date | undefined>(undefined);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setDate(new Date());
-  }, []);
-
-  const formattedDate = date ? format(date, "do MMM yyyy") : "Select date";
-
+export default function DashboardPage(props: PageProps<"/dashboard">) {
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-6">
+      <Suspense>
+        <DashboardContent searchParams={props.searchParams} />
+      </Suspense>
+    </main>
+  );
+}
+
+async function DashboardContent({
+  searchParams,
+}: {
+  searchParams: PageProps<"/dashboard">["searchParams"];
+}) {
+  const { date: dateParam } = await searchParams;
+  // Defer to request time: the current date is unstable during prerender.
+  await connection();
+  const parsed =
+    typeof dateParam === "string"
+      ? parse(dateParam, "yyyy-MM-dd", new Date())
+      : new Date();
+  const date = isValid(parsed) ? parsed : new Date();
+
+  const workouts = await getWorkoutsForDate(date);
+
+  return (
+    <>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <Popover>
-          <PopoverTrigger
-            render={<Button variant="outline" className="w-56 justify-start" />}
-          >
-            <CalendarIcon />
-            {formattedDate}
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(selected) => selected && setDate(selected)}
-              defaultMonth={date}
-            />
-          </PopoverContent>
-        </Popover>
+        <DatePicker date={format(date, "yyyy-MM-dd")} />
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Workouts</CardTitle>
           <CardDescription>
-            Logged on {formattedDate}
+            Logged on {format(date, "do MMM yyyy")}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {placeholderWorkouts.map((workout) => (
+          {workouts.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              No workouts logged for this date.
+            </p>
+          )}
+          {workouts.map((workout) => (
             <Card key={workout.id} size="sm">
               <CardHeader>
                 <CardTitle>{workout.name}</CardTitle>
@@ -82,6 +75,6 @@ export default function DashboardPage() {
           ))}
         </CardContent>
       </Card>
-    </main>
+    </>
   );
 }
