@@ -68,7 +68,8 @@ async function DashboardContent({
             </p>
           )}
           {workouts.map((workout) => (
-            <Card key={workout.id} size="sm">
+            <Link key={workout.id} href={`/dashboard/workout/${workout.id}`}>
+            <Card size="sm" className="transition-colors hover:bg-muted/50">
               <CardHeader>
                 <CardTitle>{workout.name}</CardTitle>
                 <CardDescription className="flex gap-2">
@@ -79,6 +80,7 @@ async function DashboardContent({
                 </CardDescription>
               </CardHeader>
             </Card>
+            </Link>
           ))}
         </CardContent>
       </Card>

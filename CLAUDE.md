@@ -11,6 +11,7 @@ Available docs:
 - /docs/data-fetching.md
 - /docs/auth.md
 - /docs/data-mutations.md
+- /docs/server-components.md
 
 ## Commands
 
