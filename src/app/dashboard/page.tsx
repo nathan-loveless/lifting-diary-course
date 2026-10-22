@@ -1,8 +1,10 @@
 import { format, isValid, parse } from "date-fns";
+import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -44,7 +46,12 @@ async function DashboardContent({
     <>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <DatePicker date={format(date, "yyyy-MM-dd")} />
+        <div className="flex items-center gap-2">
+          <DatePicker date={format(date, "yyyy-MM-dd")} />
+          <Button render={<Link href="/dashboard/workout/new" />} nativeButton={false}>
+            Create workout
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -61,7 +68,8 @@ async function DashboardContent({
             </p>
           )}
           {workouts.map((workout) => (
-            <Card key={workout.id} size="sm">
+            <Link key={workout.id} href={`/dashboard/workout/${workout.id}`}>
+            <Card size="sm" className="transition-colors hover:bg-muted/50">
               <CardHeader>
                 <CardTitle>{workout.name}</CardTitle>
                 <CardDescription className="flex gap-2">
@@ -72,6 +80,7 @@ async function DashboardContent({
                 </CardDescription>
               </CardHeader>
             </Card>
+            </Link>
           ))}
         </CardContent>
       </Card>

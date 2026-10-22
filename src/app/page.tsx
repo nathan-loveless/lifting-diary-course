@@ -1,10 +1,6 @@
+import { Suspense } from "react";
 import Link from "next/link";
-import {
-  Show,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 
 export default function Home() {
   return (
@@ -15,26 +11,31 @@ export default function Home() {
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-6 sm:px-10 lg:px-12">
         <header className="flex items-center justify-between rounded-full border border-white/70 bg-white/60 px-5 py-3 shadow-[0_14px_40px_rgba(39,31,23,0.08)] backdrop-blur">
-          <Link href="/" className="text-sm font-semibold uppercase tracking-[0.28em] text-[#1f4b3d]">
+          <Link
+            href="/"
+            className="text-sm font-semibold uppercase tracking-[0.28em] text-[#1f4b3d]"
+          >
             Lifting Diary
           </Link>
           <div className="flex items-center gap-3 text-sm font-medium">
-            <Show when="signed-out">
-              <SignInButton mode="modal">
-                <button className="rounded-full px-4 py-2 text-slate-700 transition hover:bg-slate-950 hover:text-white">
-                  Sign in
-                </button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button className="rounded-full bg-slate-950 px-4 py-2 text-white transition hover:bg-[#1f4b3d]">
-                  Create account
-                </button>
-              </SignUpButton>
-            </Show>
-            <Show when="signed-in">
-              <span className="text-slate-600">Signed in</span>
-              <UserButton />
-            </Show>
+            <Suspense>
+              <Show when="signed-out">
+                <SignInButton mode="modal">
+                  <button className="rounded-full px-4 py-2 text-slate-700 transition hover:bg-slate-950 hover:text-white">
+                    Sign in
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button className="rounded-full bg-slate-950 px-4 py-2 text-white transition hover:bg-[#1f4b3d]">
+                    Create account
+                  </button>
+                </SignUpButton>
+              </Show>
+              <Show when="signed-in">
+                <span className="text-slate-600">Signed in</span>
+                <UserButton />
+              </Show>
+            </Suspense>
           </div>
         </header>
 
@@ -52,23 +53,25 @@ export default function Home() {
             </p>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <Show when="signed-out">
-                <SignUpButton mode="modal">
-                  <button className="inline-flex h-12 items-center justify-center rounded-full bg-[#1f4b3d] px-6 text-sm font-semibold text-white shadow-lg shadow-[#1f4b3d]/20 transition hover:bg-[#17392e]">
-                    Create your account
-                  </button>
-                </SignUpButton>
-                <SignInButton mode="modal">
-                  <button className="inline-flex h-12 items-center justify-center rounded-full border border-slate-300 bg-white/80 px-6 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-white">
-                    Sign in
-                  </button>
-                </SignInButton>
-              </Show>
-              <Show when="signed-in">
-                <div className="inline-flex h-12 items-center rounded-full border border-[#1f4b3d]/20 bg-white/80 px-5 text-sm font-medium text-slate-700 shadow-sm">
-                  Your profile menu is ready in the header.
-                </div>
-              </Show>
+              <Suspense>
+                <Show when="signed-out">
+                  <SignUpButton mode="modal">
+                    <button className="inline-flex h-12 items-center justify-center rounded-full bg-[#1f4b3d] px-6 text-sm font-semibold text-white shadow-lg shadow-[#1f4b3d]/20 transition hover:bg-[#17392e]">
+                      Create your account
+                    </button>
+                  </SignUpButton>
+                  <SignInButton mode="modal">
+                    <button className="inline-flex h-12 items-center justify-center rounded-full border border-slate-300 bg-white/80 px-6 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-white">
+                      Sign in
+                    </button>
+                  </SignInButton>
+                </Show>
+                <Show when="signed-in">
+                  <div className="inline-flex h-12 items-center rounded-full border border-[#1f4b3d]/20 bg-white/80 px-5 text-sm font-medium text-slate-700 shadow-sm">
+                    Your profile menu is ready in the header.
+                  </div>
+                </Show>
+              </Suspense>
             </div>
           </div>
 
@@ -88,7 +91,9 @@ export default function Home() {
                 </div>
                 <div className="flex items-center justify-between border-b border-white/10 pb-4">
                   <span>Auth pages</span>
-                  <span className="font-medium text-white">/sign-in and /sign-up</span>
+                  <span className="font-medium text-white">
+                    /sign-in and /sign-up
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Skills</span>
