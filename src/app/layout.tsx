@@ -1,6 +1,8 @@
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, Show, SignOutButton } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import "./globals.css";
 
@@ -35,6 +37,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col">
         <ClerkProvider>
+          <Suspense>
+            <Show when="signed-in">
+              <SignOutButton redirectUrl="/">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="fixed top-4 right-4 z-50"
+                >
+                  Log out
+                </Button>
+              </SignOutButton>
+            </Show>
+          </Suspense>
           {children}
         </ClerkProvider>
         <ThemeToggle />
