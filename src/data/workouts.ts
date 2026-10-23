@@ -39,6 +39,25 @@ export async function getWorkoutById(workoutId: string) {
   return workout ?? null;
 }
 
+export async function getWorkoutWithExercises(workoutId: string) {
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+
+  const workout = await db.query.workouts.findFirst({
+    where: { id: workoutId, userId },
+    with: {
+      workoutExercises: {
+        with: {
+          exercise: { columns: { id: true, name: true } },
+          sets: { orderBy: { setNumber: "asc" } },
+        },
+        orderBy: { order: "asc" },
+      },
+    },
+  });
+  return workout ?? null;
+}
+
 export async function updateWorkout(
   workoutId: string,
   name: string,
