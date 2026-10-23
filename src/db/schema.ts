@@ -24,6 +24,7 @@ export const workouts = pgTable("workouts", {
 // Exercises table (exercise library/catalog)
 export const exercises = pgTable("exercises", {
     id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id"),
     name: text("name").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
