@@ -1,10 +1,23 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
+
+async function RedirectIfSignedIn() {
+  const { userId } = await auth();
+  if (userId) {
+    redirect("/dashboard");
+  }
+  return null;
+}
 
 export default function Home() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#f6f1e8] text-slate-950">
+      <Suspense>
+        <RedirectIfSignedIn />
+      </Suspense>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.9),_transparent_38%),radial-gradient(circle_at_80%_20%,_rgba(241,196,15,0.22),_transparent_28%),linear-gradient(180deg,_#f6f1e8_0%,_#efe7da_100%)]" />
       <div className="absolute -left-28 top-28 h-72 w-72 rounded-full bg-[#1f4b3d]/10 blur-3xl" />
       <div className="absolute -right-24 bottom-10 h-80 w-80 rounded-full bg-[#9b4d2d]/10 blur-3xl" />
